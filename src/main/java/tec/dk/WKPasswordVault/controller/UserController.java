@@ -1,5 +1,6 @@
 package tec.dk.WKPasswordVault.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import tec.dk.WKPasswordVault.model.Passwords;
 import tec.dk.WKPasswordVault.model.User;
@@ -25,13 +26,21 @@ public class UserController {
     void create(@RequestBody User user) {
         userRepository.save(user);
     }
-    @PostMapping(path ="/register", consumes = "application/json;charset=UTF-8")
-    void register(@RequestBody User user) {
+    @PostMapping(path ="/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    void register(@RequestParam("username") String username, @RequestParam("password") String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
         userRepository.save(user);
     }
-    @PostMapping("/login")
-    User login(@RequestBody User user) {
-        return userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword());
+
+    @PostMapping(path = "/login", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public User login(@RequestParam("username") String username, @RequestParam("password") String password) {
+        User user = userRepository.findByUsernameAndPassword(username, password);
+        if (user == null) {
+            throw new RuntimeException("Invalid username or password");
+        }
+        return user;
     }
 
     @GetMapping("/{id}")
