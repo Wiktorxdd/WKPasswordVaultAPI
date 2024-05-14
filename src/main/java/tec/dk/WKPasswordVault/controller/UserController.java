@@ -22,10 +22,6 @@ public class UserController {
         this.passwordRepository = passwordRepository;
     }
 
-    @PostMapping()
-    void create(@RequestBody User user) {
-        userRepository.save(user);
-    }
     @PostMapping(path ="/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     void register(@RequestParam("username") String username, @RequestParam("password") String password) {
         User user = new User();
